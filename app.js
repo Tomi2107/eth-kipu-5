@@ -16,10 +16,21 @@ async function initializeProvider() {
     }
 }
 
-       
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}
+
+function init() {
+    // Inicialización de simpleDex y otras configuraciones necesarias
+    document.getElementById('tokenPrice').addEventListener('change', getPriceFromSelection);
+}
+ 
 const tokenAAddress = '0x51fd9583ff870b5f196649735706631ea366a110';
 const tokenBAddress = '0x104aaB6E69aF532D7AFF6f1951d2902f02b6e0Bc';
 const simpleDexAddress = '0x3c4b3d20c12c641913984316183330342801708a';
+
 
 const simpleDexABI = [ 
     {
@@ -907,8 +918,8 @@ const tokenBABI = [
     const { signer } = await initializeProviderAndSigner();
     if (signer) {
         // Crea la instancia del contrato con el signer
-        const simpleDexContract = new ethers.Contract(simpleDexAddress, simpleDexABI, signer);
-        return simpleDexContract;
+        const simpleDex = new ethers.Contract(simpleDexAddress, simpleDexABI, signer);
+        return simpleDex;
     }
     return null;
 }
@@ -1016,7 +1027,7 @@ async function removeLiquidity() {
 
     try {
         
-        const tx = await simpleDexContract.removeLiquidity(amountToRemove);
+        const tx = await simpleDex.removeLiquidity(amountToRemove);
         console.log("Transacción enviada:", tx);
         await tx.wait(); 
         console.log("Liquidez retirada con éxito");
@@ -1045,45 +1056,55 @@ async function checkMinLiquidity() {
 
 // Función para intercambiar tokens
 async function swapTokens() {
+    const amountToSwap = ethers.utils.parseUnits("0.01", 18); 
+    const signerWithSimpleDex = simpleDex.connect(signer);
+
+    // Determinar si el usuario desea hacer swapAforB o swapBforA
+    const selectedDirection = document.getElementById('tokenToSwap').value; 
+    const amountA = document.getElementById('swapTokenA').value;
+    const amountB = document.getElementById('swapTokenB').value;
+    
+    let allowanceToken, swapFunction;
+
+    if (selectedDirection === "AtoB") {
+        amountToSwap = ethers.utils.parseUnits(amountA || "0", 18); // Usar Token A
+        allowanceToken = tokenA;
+        swapFunction = signerWithSimpleDex.swapAforB;
+    } else if (selectedDirection === "BtoA") {
+        amountToSwap = ethers.utils.parseUnits(amountB || "0", 18); // Usar Token B
+        allowanceToken = tokenB;
+        swapFunction = signerWithSimpleDex.swapBforA;
+    } else {
+        console.error("Selección de intercambio inválida");
+        return;
+    }
+
     try {
-        if (!simpleDex) {
-            console.error("Contrato no inicializado.");
-            return;
+        // Verificar allowance para el token seleccionado
+        const allowance = await allowanceToken.allowance(await signer.getAddress(), simpleDexAddress);
+        if (allowance.lt(amountToSwap)) {
+            await allowanceToken.approve(simpleDexAddress, amountToSwap);
+            console.log(`${selectedDirection === "AtoB" ? "Token A" : "Token B"} aprobado para el intercambio`);
         }
 
-        const amountToSwap = ethers.utils.parseUnits("0.000000000000000001", 18);  // Ajusta la cantidad de tokens a intercambiar
-
-        // Ejecuta la transacción de intercambio
-        const tx = await simpleDex.swap(amountToSwap);
-        console.log("Transacción enviada:", tx);
-        
-        // Esperar la confirmación de la transacción
+        // Realizar el intercambio
+        const tx = await swapFunction(amountToSwap);
+        console.log("Intercambio enviado:", tx);
         await tx.wait();
-        console.log("Intercambio realizado con éxito.");
+
+        console.log(`Intercambio ${selectedDirection === "AtoB" ? "Token A -> Token B" : "Token B -> Token A"} realizado con éxito`);
     } catch (error) {
         console.error("Error al hacer swap:", error);
     }
 }
 
-// Función para obtener el precio
+// Función para obtener el precio desde la selección en el dropdown
 async function getPriceFromSelection() {
-    // Obtener el valor seleccionado del dropdown
-    const selectedToken = document.getElementById('tokenPrice').value;
-
-    const tokenAAddress = "0x51fd9583ff870b5f196649735706631ea366a110";  
-    const tokenBAddress = "0x104aaB6E69aF532D7AFF6f1951d2902f02b6e0Bc";  
-
-   
-    let tokenAddress;
-    if (selectedToken === 'tokenA') {
-        tokenAddress = tokenAAddress;
-    } else if (selectedToken === 'tokenB') {
-        tokenAddress = tokenBAddress;
-    }
-
-    // Llamar a la función para obtener el precio
-    await getPrice(tokenAddress);
+    const selectedToken = document.getElementById('tokenPrice').value; 
+    console.log("Token seleccionado:", selectedToken);
+    await getPrice(selectedToken); // Llamamos a getPrice con el address del token
 }
+document.getElementById('tokenPrice').addEventListener('change', getPriceFromSelection);
 
 // Función para obtener el precio de un token en términos del otro
 async function getPrice(tokenAddress) {
@@ -1093,14 +1114,18 @@ async function getPrice(tokenAddress) {
             return;
         }
 
-        // Llamar a la función getPrice con la dirección del token
-        const price = await simpleDex.getPrice(tokenAddress);
-        console.log("Precio obtenido:", ethers.utils.formatUnits(price, 18));  // Formatear el precio a la unidad correcta
+        // Llamar a getPrice directamente con el address del token
+        const price = await simpleDex.methods.getPrice(tokenAddress).call(); // Suponiendo que el método es un 'call' de web3.js
+        const formattedPrice = ethers.utils.formatUnits(price, 18); // Formateamos el precio según los decimales del token (18 en este caso)
+
+        // Mostrar el precio en el frontend
+        document.getElementById("priceResult").innerHTML = `Precio: ${formattedPrice}`;
+        console.log("Precio obtenido:", formattedPrice);
     } catch (error) {
         console.error("Error al obtener el precio:", error);
+        document.getElementById("priceResult").innerHTML = "Error al obtener el precio";
     }
 }
-
 
 // Función para actualizar la información de la billetera
 async function updateWalletInfo() {
@@ -1116,7 +1141,7 @@ async function updateWalletInfo() {
 }
 
 // Conectar a la billetera cuando el usuario presiona el botón
-document.getElementById('btnConnect').addEventListener('click', async () => {
+    document.getElementById('btnConnect').addEventListener('click', async () => {
     await initializeProvider();
     await updateWalletInfo();
     document.getElementById('btnConnect').classList.add('hidden');
@@ -1125,7 +1150,7 @@ document.getElementById('btnConnect').addEventListener('click', async () => {
 });
 
 // Desconectar de MetaMask
-document.getElementById('btnDisconnect').addEventListener('click', () => {
+    document.getElementById('btnDisconnect').addEventListener('click', () => {
     document.getElementById('btnConnect').classList.remove('hidden');
     document.getElementById('btnDisconnect').classList.add('hidden');
     document.getElementById('wallet-info').classList.add('hidden');
