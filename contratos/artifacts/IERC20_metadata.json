@@ -88,7 +88,7 @@
 					},
 					{
 						"internalType": "uint256",
-						"name": "amount",
+						"name": "value",
 						"type": "uint256"
 					}
 				],
@@ -139,12 +139,12 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "recipient",
+						"name": "to",
 						"type": "address"
 					},
 					{
 						"internalType": "uint256",
-						"name": "amount",
+						"name": "value",
 						"type": "uint256"
 					}
 				],
@@ -163,17 +163,17 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "sender",
+						"name": "from",
 						"type": "address"
 					},
 					{
 						"internalType": "address",
-						"name": "recipient",
+						"name": "to",
 						"type": "address"
 					},
 					{
 						"internalType": "uint256",
-						"name": "amount",
+						"name": "value",
 						"type": "uint256"
 					}
 				],
@@ -190,8 +190,36 @@
 			}
 		],
 		"devdoc": {
+			"details": "Interface of the ERC-20 standard as defined in the ERC.",
+			"events": {
+				"Approval(address,address,uint256)": {
+					"details": "Emitted when the allowance of a `spender` for an `owner` is set by a call to {approve}. `value` is the new allowance."
+				},
+				"Transfer(address,address,uint256)": {
+					"details": "Emitted when `value` tokens are moved from one account (`from`) to another (`to`). Note that `value` may be zero."
+				}
+			},
 			"kind": "dev",
-			"methods": {},
+			"methods": {
+				"allowance(address,address)": {
+					"details": "Returns the remaining number of tokens that `spender` will be allowed to spend on behalf of `owner` through {transferFrom}. This is zero by default. This value changes when {approve} or {transferFrom} are called."
+				},
+				"approve(address,uint256)": {
+					"details": "Sets a `value` amount of tokens as the allowance of `spender` over the caller's tokens. Returns a boolean value indicating whether the operation succeeded. IMPORTANT: Beware that changing an allowance with this method brings the risk that someone may use both the old and the new allowance by unfortunate transaction ordering. One possible solution to mitigate this race condition is to first reduce the spender's allowance to 0 and set the desired value afterwards: https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729 Emits an {Approval} event."
+				},
+				"balanceOf(address)": {
+					"details": "Returns the value of tokens owned by `account`."
+				},
+				"totalSupply()": {
+					"details": "Returns the value of tokens in existence."
+				},
+				"transfer(address,uint256)": {
+					"details": "Moves a `value` amount of tokens from the caller's account to `to`. Returns a boolean value indicating whether the operation succeeded. Emits a {Transfer} event."
+				},
+				"transferFrom(address,address,uint256)": {
+					"details": "Moves a `value` amount of tokens from `from` to `to` using the allowance mechanism. `value` is then deducted from the caller's allowance. Returns a boolean value indicating whether the operation succeeded. Emits a {Transfer} event."
+				}
+			},
 			"version": 1
 		},
 		"userdoc": {
@@ -202,7 +230,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"contracts/simpleDEXProject/SimpleDEX.sol": "IERC20"
+			"contracts/SimpleDEX_corr_flattened.sol": "IERC20"
 		},
 		"evmVersion": "cancun",
 		"libraries": {},
@@ -216,12 +244,12 @@
 		"remappings": []
 	},
 	"sources": {
-		"contracts/simpleDEXProject/SimpleDEX.sol": {
-			"keccak256": "0x08043ed1fa50094cb58b547225e5358a36d31a41511954631eb7d037c7d672ce",
+		"contracts/SimpleDEX_corr_flattened.sol": {
+			"keccak256": "0x05482d69ed8fac0211dbf2cd88c6a98fce0352f514659f20a6ddb02f7a9eff0b",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://baca46bc9efc96ec8547dbfc520313cb8eab1452ebd665820565849c5568ddee",
-				"dweb:/ipfs/QmQaUKqtqvWGvf8JR69TzQj9V41L4EEZrKyGNNGdpF1xka"
+				"bzz-raw://8277564936239d0061cfef6eef0fea364ecf9ea5b8b0fa3d227e0525f964ba16",
+				"dweb:/ipfs/QmWDsZ9YycLnPfGEtAx2R1xnUW6GJ9Vz9JUtv2arYmNLbq"
 			]
 		}
 	},

@@ -1,5 +1,5 @@
-const provider = new ethers.JsonRpcProvider('https://eth-sepolia.g.alchemy.com/v2/1vzrJzkbzu-7p51SLrhqgqup4ZB3jGFx'); // Asegúrate de usar la URL correcta de tu nodo RPC
-const contractAddress = '0x3c4b3d20c12c641913984316183330342801708a';
+const provider = new ethers.JsonRpcProvider('https://scroll-sepolia.g.alchemy.com/v2/-Om5pWvbQTGynmGJHrCUkiXa-ES1ZVuW'); // Asegúrate de usar la URL correcta de tu nodo RPC
+const contractAddress = '0x8388c1d78ec692cc4555f9367ff42f17084e79a3';
 const contractABI =  [
     {
         "inputs": [

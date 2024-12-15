@@ -27,9 +27,9 @@ function init() {
     document.getElementById('tokenPrice').addEventListener('change', getPriceFromSelection);
 }
  
-const tokenAAddress = '0x51fd9583ff870b5f196649735706631ea366a110';
-const tokenBAddress = '0x104aaB6E69aF532D7AFF6f1951d2902f02b6e0Bc';
-const simpleDexAddress = '0x3c4b3d20c12c641913984316183330342801708a';
+const tokenAAddress = "0xbbbdec7784e51c80a6b86e80f6e8f7a313460906";
+const tokenBAddress = "0xcafca52de7bcb96ff0b0995af6532e774ab2f6e1";
+const simpleDexAddress = "0x8388c1d78ec692cc4555f9367ff42f17084e79a3";
 
 
 const simpleDexABI = [ 
@@ -1022,7 +1022,8 @@ async function addLiquidity() {
 
 // Función para retirar liquidez
 async function removeLiquidity() {
-   
+    const tokenA = new ethers.Contract(tokenAAddress, tokenAABI, signer);
+    const tokenB = new ethers.Contract(tokenBAddress, tokenBABI, signer);   
     const amountToRemove = ethers.utils.parseUnits("0.000000000000000001", 18); 
 
     try {
@@ -1056,9 +1057,10 @@ async function checkMinLiquidity() {
 
 // Función para intercambiar tokens
 async function swapTokens() {
-    const amountToSwap = ethers.utils.parseUnits("0.01", 18); 
+    let amountToSwap = ethers.utils.parseUnits("0.01", 18); 
     const signerWithSimpleDex = simpleDex.connect(signer);
-
+    const tokenA = new ethers.Contract(tokenAAddress, tokenAABI, signer);
+    const tokenB = new ethers.Contract(tokenBAddress, tokenBABI, signer);
     // Determinar si el usuario desea hacer swapAforB o swapBforA
     const selectedDirection = document.getElementById('tokenToSwap').value; 
     const amountA = document.getElementById('swapTokenA').value;
@@ -1099,14 +1101,22 @@ async function swapTokens() {
 }
 
 // Función para obtener el precio desde la selección en el dropdown
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('tokenPrice').addEventListener('change', getPriceFromSelection);
+});
+
+// Función principal que maneja la selección del token
 async function getPriceFromSelection() {
-    const selectedToken = document.getElementById('tokenPrice').value; 
+    const selectedToken = document.getElementById('tokenPrice').value;
+    if (!selectedToken) {
+        console.error("No se seleccionó un token.");
+        return;
+    }
     console.log("Token seleccionado:", selectedToken);
     await getPrice(selectedToken); // Llamamos a getPrice con el address del token
 }
-document.getElementById('tokenPrice').addEventListener('change', getPriceFromSelection);
 
-// Función para obtener el precio de un token en términos del otro
+// Función para obtener el precio del token desde el contrato
 async function getPrice(tokenAddress) {
     try {
         if (!simpleDex) {
@@ -1114,9 +1124,11 @@ async function getPrice(tokenAddress) {
             return;
         }
 
-        // Llamar a getPrice directamente con el address del token
-        const price = await simpleDex.methods.getPrice(tokenAddress).call(); // Suponiendo que el método es un 'call' de web3.js
-        const formattedPrice = ethers.utils.formatUnits(price, 18); // Formateamos el precio según los decimales del token (18 en este caso)
+        // Llamar al método del contrato usando web3.js
+        const price = await simpleDex.methods.getPrice(tokenAddress).call();
+        
+        // Web3.js no tiene un método nativo como ethers.utils.formatUnits, por lo que debemos convertir manualmente
+        const formattedPrice = price / (10 ** 18); // Convertimos considerando 18 decimales
 
         // Mostrar el precio en el frontend
         document.getElementById("priceResult").innerHTML = `Precio: ${formattedPrice}`;
@@ -1126,6 +1138,7 @@ async function getPrice(tokenAddress) {
         document.getElementById("priceResult").innerHTML = "Error al obtener el precio";
     }
 }
+
 
 // Función para actualizar la información de la billetera
 async function updateWalletInfo() {
@@ -1161,3 +1174,4 @@ document.getElementById('btnAddLiquidity').addEventListener('click', addLiquidit
 document.getElementById('btnRemoveLiquidity').addEventListener('click', removeLiquidity);
 document.getElementById('btnSwap').addEventListener('click', swapTokens);
 document.getElementById('btnGetPrice').addEventListener('click', getPriceFromSelection);
+

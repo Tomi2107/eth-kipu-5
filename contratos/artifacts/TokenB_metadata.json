@@ -6,18 +6,7 @@
 	"output": {
 		"abi": [
 			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "_tokenA",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "_tokenB",
-						"type": "address"
-					}
-				],
+				"inputs": [],
 				"stateMutability": "nonpayable",
 				"type": "constructor"
 			},
@@ -27,23 +16,23 @@
 					{
 						"indexed": true,
 						"internalType": "address",
-						"name": "provider",
+						"name": "owner",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "spender",
 						"type": "address"
 					},
 					{
 						"indexed": false,
 						"internalType": "uint256",
-						"name": "amountA",
-						"type": "uint256"
-					},
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "amountB",
+						"name": "value",
 						"type": "uint256"
 					}
 				],
-				"name": "LiquidityAdded",
+				"name": "Approval",
 				"type": "event"
 			},
 			{
@@ -52,77 +41,70 @@
 					{
 						"indexed": true,
 						"internalType": "address",
-						"name": "provider",
+						"name": "from",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "to",
 						"type": "address"
 					},
 					{
 						"indexed": false,
 						"internalType": "uint256",
-						"name": "amountA",
-						"type": "uint256"
-					},
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "amountB",
+						"name": "value",
 						"type": "uint256"
 					}
 				],
-				"name": "LiquidityRemoved",
-				"type": "event"
-			},
-			{
-				"anonymous": false,
-				"inputs": [
-					{
-						"indexed": true,
-						"internalType": "address",
-						"name": "swapper",
-						"type": "address"
-					},
-					{
-						"indexed": true,
-						"internalType": "address",
-						"name": "fromToken",
-						"type": "address"
-					},
-					{
-						"indexed": true,
-						"internalType": "address",
-						"name": "toToken",
-						"type": "address"
-					},
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "inputAmount",
-						"type": "uint256"
-					},
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "outputAmount",
-						"type": "uint256"
-					}
-				],
-				"name": "TokensSwapped",
+				"name": "Transfer",
 				"type": "event"
 			},
 			{
 				"inputs": [
 					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "allowance",
+				"outputs": [
+					{
 						"internalType": "uint256",
-						"name": "amountA",
+						"name": "",
 						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "spender",
+						"type": "address"
 					},
 					{
 						"internalType": "uint256",
-						"name": "amountB",
+						"name": "value",
 						"type": "uint256"
 					}
 				],
-				"name": "addLiquidity",
-				"outputs": [],
+				"name": "approve",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
 				"stateMutability": "nonpayable",
 				"type": "function"
 			},
@@ -130,11 +112,11 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "_token",
+						"name": "",
 						"type": "address"
 					}
 				],
-				"name": "getPrice",
+				"name": "balanceOf",
 				"outputs": [
 					{
 						"internalType": "uint256",
@@ -147,12 +129,51 @@
 			},
 			{
 				"inputs": [],
-				"name": "owner",
+				"name": "decimals",
 				"outputs": [
 					{
-						"internalType": "address",
+						"internalType": "uint8",
 						"name": "",
-						"type": "address"
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "name",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "symbol",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "totalSupply",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
 					}
 				],
 				"stateMutability": "view",
@@ -161,103 +182,62 @@
 			{
 				"inputs": [
 					{
-						"internalType": "uint256",
-						"name": "amountA",
-						"type": "uint256"
+						"internalType": "address",
+						"name": "to",
+						"type": "address"
 					},
 					{
 						"internalType": "uint256",
-						"name": "amountB",
+						"name": "value",
 						"type": "uint256"
 					}
 				],
-				"name": "removeLiquidity",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "reserveA",
+				"name": "transfer",
 				"outputs": [
 					{
-						"internalType": "uint256",
+						"internalType": "bool",
 						"name": "",
-						"type": "uint256"
+						"type": "bool"
 					}
 				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "reserveB",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint256",
-						"name": "amountAIn",
-						"type": "uint256"
-					}
-				],
-				"name": "swapAforB",
-				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
 				"inputs": [
 					{
+						"internalType": "address",
+						"name": "from",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "to",
+						"type": "address"
+					},
+					{
 						"internalType": "uint256",
-						"name": "amountBIn",
+						"name": "value",
 						"type": "uint256"
 					}
 				],
-				"name": "swapBforA",
-				"outputs": [],
+				"name": "transferFrom",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
 				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "tokenA",
-				"outputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "tokenB",
-				"outputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"stateMutability": "view",
 				"type": "function"
 			}
 		],
 		"devdoc": {
+			"details": "Este contrato implementa un token ERC-20 estándar",
 			"kind": "dev",
 			"methods": {},
+			"title": "TokenB: Un token ERC-20 simple",
 			"version": 1
 		},
 		"userdoc": {
@@ -268,7 +248,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"contracts/simpleDEXProject/SimpleDEX.sol": "SimpleDEX"
+			"contracts/SimpleDEX_corr_flattened.sol": "TokenB"
 		},
 		"evmVersion": "cancun",
 		"libraries": {},
@@ -282,12 +262,12 @@
 		"remappings": []
 	},
 	"sources": {
-		"contracts/simpleDEXProject/SimpleDEX.sol": {
-			"keccak256": "0x08043ed1fa50094cb58b547225e5358a36d31a41511954631eb7d037c7d672ce",
+		"contracts/SimpleDEX_corr_flattened.sol": {
+			"keccak256": "0x05482d69ed8fac0211dbf2cd88c6a98fce0352f514659f20a6ddb02f7a9eff0b",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://baca46bc9efc96ec8547dbfc520313cb8eab1452ebd665820565849c5568ddee",
-				"dweb:/ipfs/QmQaUKqtqvWGvf8JR69TzQj9V41L4EEZrKyGNNGdpF1xka"
+				"bzz-raw://8277564936239d0061cfef6eef0fea364ecf9ea5b8b0fa3d227e0525f964ba16",
+				"dweb:/ipfs/QmWDsZ9YycLnPfGEtAx2R1xnUW6GJ9Vz9JUtv2arYmNLbq"
 			]
 		}
 	},
