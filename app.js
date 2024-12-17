@@ -935,7 +935,7 @@ async function connectWallet() {
                 params: [accounts[0], 'latest']
             });
 
-            const formattedBalance = ethers.formatEther(balance);
+            const formattedBalance = ethers.utils.formatEther(balance);
             walletAddress.textContent = accounts[0];
             ethBalance.textContent = `${formattedBalance} ETH`;
 
@@ -974,6 +974,7 @@ function disconnectWallet() {
     btnDisconnect.classList.add('hidden');
 }
 
+// Función para verificar la red
 async function checkNetwork() {
     const network = await provider.getNetwork();
     if (network.name !== "sepolia" && network.name !== "scrollsepolia") {
@@ -1021,7 +1022,9 @@ async function addLiquidity() {
 
 // Función para retirar liquidez
 async function removeLiquidity() {
-     const amountToRemove = ethers.utils.parseUnits("0.000000000000000001", 18); 
+    const tokenA = new ethers.Contract(tokenAAddress, tokenAABI, signer);
+    const tokenB = new ethers.Contract(tokenBAddress, tokenBABI, signer);   
+    const amountToRemove = ethers.utils.parseUnits("0.000000000000000001", 18); 
 
     try {
         
@@ -1136,7 +1139,15 @@ async function getPrice(tokenAddress) {
     }
 }
 
+// Consolidar inicialización y asignar eventos
+document.addEventListener('DOMContentLoaded', async () => {
+    await initializeWeb3();
 
+    // Asignar eventos
+    document.getElementById('tokenPrice').addEventListener('change', getPriceFromSelection);
+    document.getElementById('btnGetPrice').addEventListener('click', getPriceFromSelection);
+    document.getElementById('btnRemoveLiquidity').addEventListener('click', removeLiquidity);
+});
 // Función para actualizar la información de la billetera
 async function updateWalletInfo() {
     const address = await signer.getAddress();
@@ -1171,3 +1182,4 @@ document.getElementById('btnAddLiquidity').addEventListener('click', addLiquidit
 document.getElementById('btnRemoveLiquidity').addEventListener('click', removeLiquidity);
 document.getElementById('btnSwap').addEventListener('click', swapTokens);
 document.getElementById('btnGetPrice').addEventListener('click', getPriceFromSelection);
+
