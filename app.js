@@ -1021,9 +1021,7 @@ async function addLiquidity() {
 
 // Función para retirar liquidez
 async function removeLiquidity() {
-    const tokenA = new ethers.Contract(tokenAAddress, tokenAABI, signer);
-    const tokenB = new ethers.Contract(tokenBAddress, tokenBABI, signer);   
-    const amountToRemove = ethers.utils.parseUnits("0.000000000000000001", 18); 
+     const amountToRemove = ethers.utils.parseUnits("0.000000000000000001", 18); 
 
     try {
         
@@ -1098,7 +1096,6 @@ async function swapTokens() {
         console.error("Error al hacer swap:", error);
     }
 }
-
 
 // Función para obtener el precio desde la selección en el dropdown
 document.addEventListener('DOMContentLoaded', () => {
