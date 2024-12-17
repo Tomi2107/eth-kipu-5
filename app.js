@@ -974,7 +974,6 @@ function disconnectWallet() {
     btnDisconnect.classList.add('hidden');
 }
 
-// Función para verificar la red
 async function checkNetwork() {
     const network = await provider.getNetwork();
     if (network.name !== "sepolia" && network.name !== "scrollsepolia") {
@@ -990,7 +989,7 @@ async function updateGasInfo() {
         }
 
         const gasPrice = await provider.getGasPrice();
-        const formattedGasPrice = ethers.formatUnits(gasPrice, "gwei");
+        const formattedGasPrice = ethers.utils.formatUnits(gasPrice, "gwei");
         gasAmount.textContent = `${formattedGasPrice} Gwei`;
     } catch (error) {
         console.error("Error al obtener el precio del gas:", error);
@@ -1024,7 +1023,7 @@ async function addLiquidity() {
 async function removeLiquidity() {
     const tokenA = new ethers.Contract(tokenAAddress, tokenAABI, signer);
     const tokenB = new ethers.Contract(tokenBAddress, tokenBABI, signer);   
-    const amountToRemove = ethers.parseUnits("0.000000000000000001", 18); 
+    const amountToRemove = ethers.utils.parseUnits("0.000000000000000001", 18); 
 
     try {
         
@@ -1042,11 +1041,11 @@ async function checkMinLiquidity() {
     const liquidityA = await tokenA.balanceOf(simpleDexAddress);  
     const liquidityB = await tokenB.balanceOf(simpleDexAddress);  
 
-    const minLiquidity = ethers.parseUnits("0.01", 18); 
+    const minLiquidity = ethers.utils.parseUnits("0.01", 18); 
 
-    console.log("Liquidez mínima posible para retirar: ", ethers.formatUnits(minLiquidity, 18));
-    console.log("Liquidez disponible TokenA: ", ethers.formatUnits(liquidityA, 18));
-    console.log("Liquidez disponible TokenB: ", ethers.formatUnits(liquidityB, 18));
+    console.log("Liquidez mínima posible para retirar: ", ethers.utils.formatUnits(minLiquidity, 18));
+    console.log("Liquidez disponible TokenA: ", ethers.utils.formatUnits(liquidityA, 18));
+    console.log("Liquidez disponible TokenB: ", ethers.utils.formatUnits(liquidityB, 18));
 
     // Compara y ajusta el monto de retiro para que no sea inferior al mínimo
     if (liquidityA.lt(minLiquidity) || liquidityB.lt(minLiquidity)) {
@@ -1069,11 +1068,11 @@ async function swapTokens() {
     let allowanceToken, swapFunction;
 
     if (selectedDirection === "AtoB") {
-        amountToSwap = ethers.parseUnits(amountA || "0", 18); // Usar Token A
+        amountToSwap = ethers.utils.parseUnits(amountA || "0", 18); // Usar Token A
         allowanceToken = tokenA;
         swapFunction = signerWithSimpleDex.swapAforB;
     } else if (selectedDirection === "BtoA") {
-        amountToSwap = ethers.parseUnits(amountB || "0", 18); // Usar Token B
+        amountToSwap = ethers.utils.parseUnits(amountB || "0", 18); // Usar Token B
         allowanceToken = tokenB;
         swapFunction = signerWithSimpleDex.swapBforA;
     } else {
@@ -1148,8 +1147,8 @@ async function updateWalletInfo() {
     const gasPrice = await provider.getGasPrice(address);
 
     document.getElementById('wallet-address').textContent = address;
-    document.getElementById('eth-balance').textContent = ethers.formatEther(ethBalance);
-    document.getElementById('gas-amount').textContent = ethers.formatEther(gasPrice, "gwei");
+    document.getElementById('eth-balance').textContent = ethers.utils.formatEther(ethBalance);
+    document.getElementById('gas-amount').textContent = ethers.utils.formatEther(gasPrice, "gwei");
     document.getElementById('network-name').textContent = network.name;
 }
 
@@ -1174,4 +1173,3 @@ document.getElementById('btnAddLiquidity').addEventListener('click', addLiquidit
 document.getElementById('btnRemoveLiquidity').addEventListener('click', removeLiquidity);
 document.getElementById('btnSwap').addEventListener('click', swapTokens);
 document.getElementById('btnGetPrice').addEventListener('click', getPriceFromSelection);
-
