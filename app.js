@@ -1099,6 +1099,7 @@ async function swapTokens() {
     }
 }
 
+
 // Función para obtener el precio desde la selección en el dropdown
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('tokenPrice').addEventListener('change', getPriceFromSelection);
